@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+    
+    <head>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="viewport" content="width=device-width,initial-scale = 0.59, user-scalable = no">
+        
+        <title>Sebtris</title>
+        
+    </head>
+    <body -ms-touch-action: none>
+
+        <canvas id="tetrisboard" width="298" height="598" style="background:beige; border:2px solid #000000; position:fixed; top: 0px; left:20px;">
+            Your browser does not support the HTML5 canvas tag.
+        </canvas>
+        
+        <canvas id="nextpiece" width="180" height="150" style="background:beige; border:2px solid #000000; position:fixed; top:0px; left:340px;">
+        </canvas>
+        
+        <canvas id="scoreboard" width="180" height="90" style="background:beige; border:2px solid #000000; position:fixed; top:172px; left:340px;">
+        </canvas>
+        
+        <div style="width:150px; position:fixed; top:300px; left:355px;"> 
+        <p>CONTROLS</p> 
+        
+        <p>&#x25C4 &#x25BA   -  Move blocks</p>
+        <p>&#x25B2  -   Rotate</p>
+        <p>&#x25BC  -   Soft drop</p>
+        <p>SPACE  -   Hard drop</p>
+        <p>Z  -  Pause</p>
+            
+        </div>
+        
+
+        <script  type="text/javascript" src="sebtris.js"></script>
+
+    </body>
+</html>
