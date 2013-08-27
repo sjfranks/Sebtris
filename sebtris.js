@@ -33,6 +33,9 @@ var gamespeed; //this is the rate that the Tetris blocks fall
 var dropFlag = false; //flashes the screen when you drop a brick
 var dropCount = 0; //stores time you dropped the piece, based on count variable above, in order to animate shiz
 
+var clearFlag = false;
+
+
 
 var solidBlocks = []; //two-dimensional array for storing solidity of blocks
 for (var x = 0; x < 10; x++) {
@@ -46,16 +49,12 @@ for (var x = 0; x < 10; x++) {
 
 
 
-var snd_drop = new Audio("drop.wav"); 
-var snd_move = new Audio("move.wav");
-var snd_down = new Audio("down.wav");
-var snd_slot = new Audio("slotted.wav");
 
 
 // collection of sounds that are playing
 var playing={};
 // collection of sounds
-var sounds={drop:"drop.wav", move:"move.wav", count:"down.wav", slot:"slotted.wav" };
+var sounds={drop:"drop.wav", move:"move.wav", count:"down.wav", slot:"slotted.wav", theme:"Sebtris.wav", clear:"Clear.wav" };
 
 // function that is used to play sounds
 function playsound(x)
@@ -117,7 +116,6 @@ function piece() {
                 if (this.shapeMap(x,y, this.shape,this.rotation) === true) {
                     solidBlocks[xcoord+x][ycoord+y] = 0;
                     ctx.clearRect(((xcoord+x)*TILE)-2,((ycoord+y)*TILE)-2, TILE+4, TILE+4);
-                    
                     ctx.lineWidth = 1;                          //draws grid
                     ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";    
                     ctx.beginPath(); 
@@ -131,6 +129,20 @@ function piece() {
                     ctx.lineTo(((xcoord+x)*TILE)+TILE,((ycoord+y)*TILE)+TILE);
                     ctx.stroke();
                 }
+
+            }
+        }
+        
+        for (var y = -2; y <= 2; y++) {
+            for (var x = -2; x <= 2; x++) {   
+                        if (this.shapeMap(x,y, this.shape,this.rotation) === false ) {
+                    if (xcoord+x > 0 && xcoord+x <= 9) {
+                        if (solidBlocks[xcoord+x][ycoord+y] === 1) {
+                            this.block(ctx,(xcoord+x)*TILE,(ycoord+y)*TILE,colourMap[xcoord+x][ycoord+y]);
+                        }
+                    }
+                }
+                
             }
         }
     };
@@ -226,7 +238,7 @@ function piece() {
                 this.generatePiece(this.nextShape);
                 
                 game.drawBoxes();
-                snd_slot.play();
+                playsound("slot");
             }
         }
         else {
@@ -590,6 +602,8 @@ function Game() {
     this.title = function() {    //display title screen
         ctx.clearRect(0,0,GAMEBOARD.width,GAMEBOARD.height);
         
+        
+        
         //draw an 's' in blocks
         this.piece.block(ctx,1*TILE,(5-1)*TILE,0);
         this.piece.block(ctx,2*TILE,(5-1)*TILE,0);
@@ -733,11 +747,11 @@ function Game() {
         ctx.fillText("GAME",GAMEBOARD.width/2,GAMEBOARD.height/2);
         ctx.fillText("OVER",GAMEBOARD.width/2,(GAMEBOARD.height/2)+66);
         document.onkeydown=function(){
-            gameState = "title";
+            gameState = "title"; playsound("theme");
             
             };
         document.ontouchstart=function(){
-            gameState = "title";
+            gameState = "title"; playsound("theme");
              };
     };
 
@@ -783,6 +797,7 @@ function Game() {
                         this.copyLines(y);
                         score += 100 * combo;  //to the power of COMBO!
                         game.updateScore();
+                        clearFlag = true;
                     }
             }
             line = 0;
@@ -799,6 +814,7 @@ function Game() {
     };
 
     this.clearLine = function clearLine(lineNumber) {
+            
             for (var x = 0; x < 10; x++) {
                 solidBlocks[x][lineNumber] = 0; //clears line
             }
@@ -941,6 +957,11 @@ function animate() {  //main game loop
                     dropCount = 0;
                 }
             } 
+            
+            if (clearFlag === true) {
+                playsound("clear");
+                clearFlag = false;
+            }
 
             break;
         
@@ -970,6 +991,8 @@ var game = new Game();
 
 game.start();
 game.init();
+playsound("theme");
+
 
 
 if(touchable) {
@@ -1027,7 +1050,6 @@ document.addEventListener('keydown', function(event) {
         if (event.keyCode == 37) {
             // Left
             playsound("move");
-            snd_move.currentTime=0;
             game.piece.moveLeft();
             
         }
@@ -1035,21 +1057,18 @@ document.addEventListener('keydown', function(event) {
         else if (event.keyCode == 39) {
             // Right
             playsound("move");
-            snd_move.currentTime=0;
             game.piece.moveRight();
         }
     
         else if (event.keyCode == 40) {
             // Down
             playsound("move");
-            snd_move.currentTime=0;
             game.piece.moveDown();
         }
     
         else if (event.keyCode == 38) {
             // Up
             playsound("move");
-            snd_move.currentTime=0;
             game.piece.rotate();
         }
             
